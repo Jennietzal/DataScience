@@ -65,7 +65,7 @@ select * from #coursegender_percentage
 where percentage>70
 
 --f
-select a.DepartmentName,a.DepartmentId,d.StudentId,count(distinct d.studentid) as num_students,count(d.studentid)*100/cast(sum(count(d.studentid)) over(partition by a.departmentid)as decimal(18,2))as percentage
+select a.DepartmentName,count(distinct d.studentid)as num_students
 from Departments$ as A                   
 inner join Courses$ as B
 on A.DepartmentId= B.DepartmentID
@@ -75,13 +75,13 @@ inner join Students$ as D
 on d.StudentId=c.StudentId
 inner join Teachers$ as E 
 on e.TeacherId=b.TeacherId
---where a.DepartmentName='sport'
-group by a.DepartmentName,a.DepartmentId,d.StudentId
-order by a.DepartmentName
+ where c.degree>80
+group by a.DepartmentName
+
 
 
 --g
-select a.DepartmentName, count(d.studentid) as num_students
+select a.DepartmentName, count(distinct d.studentid) as num_students
 from Departments$ as A
 inner join Courses$ as B
 on A.DepartmentId= B.DepartmentID
@@ -110,7 +110,9 @@ order by degree_avg desc
 
 
 --view
---create view dataview
+
+--a
+create view [datacourse] as
 select b.CourseName,a.DepartmentName,e.FirstName,e.LastName,count(d.studentid)as student_total
 from Departments$ as A
 inner join Courses$ as B
@@ -123,6 +125,20 @@ inner join Teachers$ as E
 on e.TeacherId=b.TeacherId
 group by b.CourseName,a.DepartmentName,e.FirstName,e.LastName
 
+
+--b
+create view [data students] as
+select d.FirstName,d.LastName,a.DepartmentName,count(b.CourseId) as num_courses, cast(avg(c.degree)as decimal)as avg_degree,cast(AVG(c.degree) OVER(PARTITION BY d.studentid)as decimal) AS Avgtotaldegree
+from Departments$ as A
+inner join Courses$ as B
+on A.DepartmentId= B.DepartmentID
+inner join Classrooms$ as C
+on C.CourseId= B.CourseId
+inner join Students$ as D 
+on d.StudentId=c.StudentId
+inner join Teachers$ as E 
+on e.TeacherId=b.TeacherId
+group by a.DepartmentName,d.FirstName,d.LastName, d.StudentId,c.degree,b.CourseName
 
 
 
