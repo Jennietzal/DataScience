@@ -65,7 +65,7 @@ select * from #coursegender_percentage
 where percentage>70
 
 --f
-select a.DepartmentName,count(distinct d.studentid)as num_students
+select a.DepartmentName, count(distinct d.StudentId) as num_students, sum(case when c.degree>80 then 1 else null end) as stu_deg_over80,cast(sum(case when c.degree>80 then 1 else null end) *100.0 /count(distinct d.StudentId)as decimal (18,2))as percentage
 from Departments$ as A                   
 inner join Courses$ as B
 on A.DepartmentId= B.DepartmentID
@@ -75,13 +75,13 @@ inner join Students$ as D
 on d.StudentId=c.StudentId
 inner join Teachers$ as E 
 on e.TeacherId=b.TeacherId
- where c.degree>80
+
 group by a.DepartmentName
 
 
 
 --g
-select a.DepartmentName, count(distinct d.studentid) as num_students
+select a.DepartmentName, count(distinct d.studentid) as num_students, sum(case when c.degree<60 then 1 else null end)as stu_deg_less60,cast(sum(case when c.degree<60 then 1 else null end) *100.0 /count(distinct d.StudentId)as decimal (18,2))as percentage
 from Departments$ as A
 inner join Courses$ as B
 on A.DepartmentId= B.DepartmentID
@@ -91,7 +91,7 @@ inner join Students$ as D
 on d.StudentId=c.StudentId
 inner join Teachers$ as E 
 on e.TeacherId=b.TeacherId
-where c.degree<60
+
 group by a.DepartmentName
 
 --h
