@@ -5,8 +5,8 @@ library(dplyr)
 library(ggplot2)
 
 ### Import the titanic dataset
-titanic <- read.csv(paste(path,"../data/titanic.csv",sep="/"))
-head(titanic)
+titanic <- read.csv("C:/Users/Xnes/DataScience/data/titanic.csv")
+View(titanic)
 
 ##################################################
 ### Number of pasangers and how much survived
