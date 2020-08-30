@@ -22,7 +22,7 @@ data_college_sml<-data_college%>% filter(!is.na(data_college))
 View(data_college_sml)
 
 #a.
-data_college_sml %>% 
+a<-data_college_sml %>% 
   group_by(DepartmentName)%>%
   count(StudentId) %>% summarise(students=n())
 
@@ -61,7 +61,7 @@ crsbygndr<-data_college_sml%>%group_by(CourseName,CourseId,Gender.y)%>%
 e<-left_join(crsbygndr,Total,by="CourseName")
 
 e$Gndr_stu_percent=(e$n.x/e$n.y)*100
-#e%>%rename(G.Stu=Gender.y,numberstu=n.x, Totalstu=n.y)
+
 e<-e%>%filter(Gndr_stu_percent>70)%>%na.omit(e)%>%
   select(CourseId,CourseName,Gender.y,Gndr_stu_percent)
 e
@@ -91,10 +91,36 @@ data_college_sml$Teacher<- paste(data_college_sml$FirstName.x, data_college_sml$
 h<-data_college_sml %>% select(Teacher,degree)%>%group_by(Teacher)%>% 
   summarize(degree_mean=mean(degree,na.rm = T))%>%arrange(desc(degree_mean))%>%
   na.omit()
-View(h)
 
 i<-data_college_sml%>%group_by(CourseId,CourseName,DepartmentName,Teacher)%>% 
   distinct(StudentId)%>% count()
 
 View(i)
+
+#j.
+j<-full_join(Students,Classrooms,by="StudentId")
+j<-full_join(j, Courses, by= "CourseId")
+df_cnt_crs<-j%>%group_by(StudentId,FirstName,LastName)%>% distinct(CourseId)%>% count()
+
+df_English <-j %>%filter(j$DepartmentID==1)
+df_Mean_English<-df_English %>% group_by(StudentId)%>%summarize(English=mean(degree,na.rm = T))
+df_j<-full_join(df_j,df_Mean_English, by="StudentId")
+
+df_Arts<- j %>% filter(j$DepartmentID==3)
+df_Mean_Arts<- df_Arts%>%group_by(StudentId) %>%summarize(Arts=mean(degree,na.rm = T))
+df_j<- full_join(df_j,df_Mean_Arts, by ="StudentId")
+
+df_Science<- j %>% filter(j$DepartmentID==2)
+df_Mean_Science<- df_Science%>%group_by(StudentId) %>%summarize(Science=mean(degree,na.rm = T))
+df_j<- full_join(df_j,df_Mean_Science, by ="StudentId")
+
+df_Sport<- j %>% filter(j$DepartmentID==4)
+df_Mean_Sport<- df_Sport%>%group_by(StudentId) %>%summarize(Sport=mean(degree,na.rm = T))
+df_j<- full_join(df_j,df_Mean_Sport, by ="StudentId")
+
+
+df_Mean_General <- j%>% group_by(StudentId)%>% summarize(General=mean(degree,na.rm = T))
+df_j=full_join(df_j,df_Mean_General,by="StudentId")
+View(df_j)
+
 #dbDisconnect(con)
