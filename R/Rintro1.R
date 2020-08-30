@@ -349,7 +349,7 @@ l6$n
 ### DATA FRAMES
 ##########################
 ### A data.frame is a collection of vectors
-### Vectors are arranged by colums
+### Vectors are arranged by columns
 ### The length of each vector has to be the same
 
 a <- c(1,2,3,4,5,6,7,8)
