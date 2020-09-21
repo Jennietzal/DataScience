@@ -25,7 +25,7 @@ View(data_college_sml)
 a<-data_college_sml %>% 
   group_by(DepartmentName)%>%
   count(StudentId) %>% summarise(students=n())
-
+View(a)
 #b. 
 b<-data_college_sml %>% filter(DepartmentId==1) %>% 
   group_by(CourseName) %>% count(StudentId) %>%
@@ -91,7 +91,7 @@ data_college_sml$Teacher<- paste(data_college_sml$FirstName.x, data_college_sml$
 h<-data_college_sml %>% select(Teacher,degree)%>%group_by(Teacher)%>% 
   summarize(degree_mean=mean(degree,na.rm = T))%>%arrange(desc(degree_mean))%>%
   na.omit()
-
+#i.
 i<-data_college_sml%>%group_by(CourseId,CourseName,DepartmentName,Teacher)%>% 
   distinct(StudentId)%>% count()
 
@@ -104,7 +104,7 @@ df_cnt_crs<-j%>%group_by(StudentId,FirstName,LastName)%>% distinct(CourseId)%>% 
 
 df_English <-j %>%filter(j$DepartmentID==1)
 df_Mean_English<-df_English %>% group_by(StudentId)%>%summarize(English=mean(degree,na.rm = T))
-df_j<-full_join(df_j,df_Mean_English, by="StudentId")
+df_j<-full_join(df_cnt_crs,df_Mean_English, by="StudentId")
 
 df_Arts<- j %>% filter(j$DepartmentID==3)
 df_Mean_Arts<- df_Arts%>%group_by(StudentId) %>%summarize(Arts=mean(degree,na.rm = T))
