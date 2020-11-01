@@ -6,7 +6,7 @@ mammalsleep$odi<- factor(mammalsleep$odi)
 mammalsleep$sei<- factor(mammalsleep$sei)
 mammalsleep$pi<- factor(mammalsleep$pi)
 
-# correlation pearsonand spearman and cor.test gives as p-value
+# correlation pearson and spearman and cor.test gives as p-value
 cor(mammalsleep$bw,mammalsleep$brw)
 cor(mammalsleep$bw,mammalsleep$brw, method = "spearman")
 cor.test(mammalsleep$bw,mammalsleep$brw,method = "spearman",na.rm=T)

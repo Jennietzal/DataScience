@@ -14,9 +14,9 @@ outlierMatrix <- function(data,threshold=1.5) {
         if(is.numeric(data[[v]])) {
             outlow <- quantile(data[[v]],probs = 0.25,na.rm = T) 
             outhigh <- quantile(data[[v]],probs = 0.75, na.rm = T)
-            irq_level <- (outhigh - outlow) * threshold
-            outlow <- outlow - irq_level
-            outhigh <- outhigh +  irq_level
+            iqr_level <- (outhigh - outlow) * threshold
+            outlow <- outlow - iqr_level
+            outhigh <- outhigh +  iqr_level
             mv <- ifelse(data[[v]] < outlow | data[[v]] > outhigh, 1, 0)
             outdata[v] <- mv
         } else {
@@ -83,26 +83,25 @@ head(animals)
 ## Using IQR for catching univariate outliers (1.5 x IRQ)
 head(outlierMatrix(animals,threshold=1.5))
 
-## Using IQR for catching univariate outliers (1.5 x IRQ)
+## Using IQR for catching univariate outliers (2 x IRQ)
 head(outlierMatrix(animals,threshold=2.0))
 
 ## Visual determination of univariate outliers using boxplots 
-options(repr.plot.width = 8, repr.plot.height = 8)
-par(mfrow=c(4,3))
+
 for(v in names(animals[,2:8])) {
     boxplot(animals[[v]],main=v)
 }
-par(mfrow=c(1,1))
+
 
 
 ## Visual determination of univariate outliers using scatter plots 
-options(repr.plot.width = 8, repr.plot.height = 8)
-par(mfrow=c(4,3))
+
+
 for(v in names(animals[,2:8])) {
     scatter.smooth(animals[[v]] ~ animals$species, main=v, xlab="animals",ylab=v, family="symmetric",
                   lpars =list(col = "red", lwd = 2, lty = 2))
 }
-par(mfrow=c(1,1))
+
 
 
 ## dbscan
@@ -127,7 +126,7 @@ res <-chisq.plot(animals.norm[mm$rows,2:6],ask=F)
 res$outliers
 
 ## Distance-Distance plot for outlier detection
-options(repr.plot.width = 4, repr.plot.height = 4)
+
 animals2 <- animals[mm$rows,c(4,5,7,8)]
 distances <- dd.plot(animals2, quan=1/2, alpha=0.025)
 
@@ -143,11 +142,11 @@ plot(animals.pca$x, col=outliers)
 
 head(missingMatrix(animals))
 
-options(repr.plot.width = 4, repr.plot.height = 4)
+
 vis_miss(animals)
 
 # require(naniar)
-options(repr.plot.width = 8, repr.plot.height = 4)
+
 gg_miss_fct(x=animals, fct=species) + 
 theme(axis.text.x = element_text(angle=90, size=8))
 
@@ -162,7 +161,6 @@ miss1 <- TestMCARNormality(data=animals2, , del.lesscases = 1, imputation.number
 summary(miss1)
 
 
-options(repr.plot.width = 6, repr.plot.height = 8)
 boxplot(miss1)
 
 summary(miss1$imputed.data)
@@ -174,16 +172,16 @@ head(animals.imp)
 dim(animals.imp)
 
 ## Visualize the imputed missing values using scatter plots 
-options(repr.plot.width = 8, repr.plot.height = 8)
+
 
 misspoints <- missingMatrix(animals[idx,])
 animals.imp <- data.frame(miss1$imputed.data)
-par(mfrow=c(4,3))
+
 for(v in names(animals2)) {
     scatter.smooth(animals.imp[[v]] ~ animals[idx,"species"], main=v, xlab="animals",ylab=v, family="symmetric",
                   lpars =list(col = "red", lwd = 2, lty = 2), col=misspoints[idx,v]+1)
 }
-par(mfrow=c(1,1))
+
 
 
 # library(mice)
@@ -215,24 +213,24 @@ options(repr.plot.width = 8, repr.plot.height = 8)
 
 misspoints <- missingMatrix(animals)
 animals.imp <- complete(imputed,1)
-par(mfrow=c(4,3))
+
 for(v in names(animals)) {
     scatter.smooth(animals.imp[[v]] ~ animals[,"species"], main=v, xlab="animals",ylab=v, family="symmetric",
                   lpars =list(col = "red", lwd = 2, lty = 2), col=misspoints[,v]+1)
 }
-par(mfrow=c(1,1))
 
 
-options(repr.plot.width = 8, repr.plot.height = 8)
+
+
 
 misspoints <- missingMatrix(animals)
 animals.imp <- complete(imputed,5)
-par(mfrow=c(4,3))
+
 for(v in names(animals)) {
     scatter.smooth(animals.imp[[v]] ~ animals[,"species"], main=v, xlab="animals",ylab=v, family="symmetric",
                   lpars =list(col = "red", lwd = 2, lty = 2), col=misspoints[,v]+1)
 }
-par(mfrow=c(1,1))
+
 
 
 ### gt on each of the five imputations
